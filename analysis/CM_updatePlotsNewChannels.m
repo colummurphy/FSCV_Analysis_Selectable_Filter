@@ -1,4 +1,4 @@
-function CM_updatePlots(app)
+function CM_updatePlotsNewChannels(app)
 
 global plotParam processed hgui parameters
 

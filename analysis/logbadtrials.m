@@ -1,9 +1,15 @@
 function logbadtrials(subj,sess,trtype,trial,chs)
+
+% for thuong and beyond
+
 %write bad trials based on ch# etc. to excel sheet (TXT file)
 %eg. logbadtrials(hgui.subject,hgui.sessionnum,hgui.trialtype,hgui.trialnum,1:4)
 %trialnum is the label of trial num eg. trial num 100 = trial 1
 %xlswrite(FILE,ARRAY,SHEET,RANGE) writes to the specified SHEET and RANGE.
-pathsave=fullfile('Z:', 'data_MIT', 'analysis', subj, 'triallogs_CM', filesep);
+
+pathsave=fullfile('Y:', 'data_MIT', 'analysis', subj, 'triallogs_HNS', filesep); %CHANGE TO YOUR DIRECTORY PATH FOR THE behemoth server
+pathsave=fullfile('Y:', 'data', subj, 'trial_logs', 'hns', filesep); %CHANGE TO YOUR DIRECTORY PATH FOR THE behemoth server
+
 if ~isdir(pathsave)
     mkdir(pathsave);
 end

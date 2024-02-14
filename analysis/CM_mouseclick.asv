@@ -74,11 +74,17 @@ if clktype==0
         colorPlotIndex = colorPlotIndices(ii);
         colorPlot = colorPlots(colorPlotIndex);
 
-        colorMap = app.getColorMap();
-        colorScale = app.getColorScale();
-        
+        % Plot backgounded data (processed.Isub(selch(ii)).data)
+        % CM_setguicolorplot( appDesColorFig(selch(ii)),...
+        %                     processed.Isub(selch(ii)).data, ii );  
+
+
+
+
+
+
         CM_setguicolorplot(app, colorPlot, processed.Isub(selch(ii)).data, ...
-                            ii, colorPlots, colorMap, colorScale); 
+                            ii, colorPlots); 
     end
 
 

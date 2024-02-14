@@ -104,6 +104,7 @@ if length(selch)>4
       cla(hgui.itplotx{3})
 end
 %}
+   
 
   % get all color plots
   colorPlots = app.getColorPlots();
@@ -124,11 +125,14 @@ end
   % plot the color plot and dopamine plot
   for ii=1:length(selch)
 
+    colorMap = app.getColorMap();
+    colorScale = app.getColorScale();
+
     colorPlotIndex = colorPlotIndices(ii);
     colorPlot = colorPlots(colorPlotIndex);
     
     CM_setguicolorplot(app, colorPlot, processed.Isub(selch(ii)).data, ...
-                        ii, colorPlots ); 
+                        ii, colorPlots, colorMap, colorScale); 
 
     %compute pca - hfwidth = []
     hfwidth=[];

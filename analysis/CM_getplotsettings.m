@@ -79,7 +79,8 @@ elseif ~isfield(plotParam,'colorFSCV')
     plotParam.mcsc='cl1';                %plot morletgram
     
     % get color scale from app
-    plotParam.cmax = app.getColorPlotScale();
+    colorScale = app.getColorScale();
+    plotParam.cmax = colorScale(2);
 
     plotParam.zoomTS=[20 40];           %zoom in window to look at LFP TS's
     plotParam.zoomTS=[0 60];

@@ -3,7 +3,6 @@ global hgui
 hgui.sessionnum='';
 
 % CM - separator for mac OR pc
-% namy = strfind(hgui.PathName, ("/"|"\") );
 namy = [strfind(hgui.PathName, '/'), strfind(hgui.PathName, '\')];
 
 hgui.ephysid='';
@@ -89,6 +88,8 @@ end
 iscleo=~isempty(strfind(hgui.PathName,'cleo'));
 ispatra=~isempty(strfind(hgui.PathName,'patra'));
 iscfmea=~isempty(strfind(hgui.PathName,'cfmea'));
+isthuong=contains(lower(hgui.PathName),'thuong');
+
 if iscleo
     hgui.subject='cleo';
 elseif ispatra
@@ -98,6 +99,12 @@ elseif iscfmea
     endnameid=strfind(hgui.FileName,'_');
     hgui.session=hgui.FileName(1:endnameid-1);
     hgui.sessionnum=hgui.session;
+elseif isthuong
+    hgui.subject='thuong';
+    dateid=findstr(hgui.PathName,'matlab_sync');
+    datesess=hgui.PathName(dateid+12:dateid+19);
+    hgui.session=datesess;
+    hgui.sessionnum=str2num(datesess);
 else
     hgui.subject='';
     hgui.subject='patra';   %07/02/2021

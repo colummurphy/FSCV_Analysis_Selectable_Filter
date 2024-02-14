@@ -1,4 +1,5 @@
-function [] = CM_setguicolorplot(app, axPlot,cData,plotnum, allColorPlots)
+function [] = CM_setguicolorplot(app, axPlot,cData,plotnum, ...
+                        allColorPlots, colorMap, colorScale)
 global plotParam parameters
 
 
@@ -12,8 +13,6 @@ global plotParam parameters
   Note: chX = 1 or 2 or 3 or 4.  
 
   Function is run for each channel (1 to 4);   
-
-
 
   plotParam.map (233 * 3)
   Create a custom colormap by defining a three-column 
@@ -34,7 +33,6 @@ firstplot=plotParam.firstplot;
 
 % if channel data is available
 if ~isempty(cData)
-    cmax=1;     %default max color
     
     % fontsize = 8
     fontsize=plotParam.fontsize;   
@@ -44,42 +42,6 @@ if ~isempty(cData)
     % Remaining columns contain the time indexes (1-601) of those events
     events=plotParam.events;
     
-    % False, if there is no figure create a figure
-    if isempty(axPlot)
-        fign=figure;    
-        set(fign,'position',[100 100 900 500],'color',[1 1 1]);
-        axPlot=axes;
-    end
-    
-    % Set plotsize = [750, 150]
-    plotsize=[500 150];
-    if isfield(plotParam,'colorplotsize')
-        plotsize=plotParam.colorplotsize;
-    end
-    
-    % Set color max = 1
-    if isfield(plotParam,'cmax')
-        cmax=plotParam.cmax;        
-    end
-    
-    % default colormap settings, cmin not used, 
-    % cScale + cMap overritten below
-    [map, cmin]=setColorScale(cmax);        
-    cScale=[cmin cmax];
-    cMap=map;
-    
-    % Set color scale = [-0.6667, 1]
-    if isfield(plotParam,'cscale')
-        cScale=plotParam.cscale;
-    end
-    
-    % Set color map = 233 * 3 vector
-    if isfield(plotParam,'map')
-        cMap=plotParam.map;
-    end
-    
-
-
     % default sampling_freq = 10
     sampling_freq=10;
     
@@ -99,11 +61,12 @@ if ~isempty(cData)
     t_start=1;
     t_end=size(cData,2);
 
+    % set the color map for the plot
+    colormap(axPlot,colorMap);
 
     % axPlot - handle to our current plot
     % Set the colormap for the axPlot figure to cMap
     if firstplot
-        colormap(axPlot,cMap)      %defined color map
         
         % toggle plotParam.firstplot = 0 after it is run with the first
         % channel
@@ -140,7 +103,7 @@ if ~isempty(cData)
     % ax.Clim(2) - color bar top value.
     % 'clim' automatically computed from the range of the data being plotted.
     % Setting 'clim' changes the way the color is scaled from the data values.
-    set(axPlot,'clim', cScale)
+    set(axPlot,'clim', colorScale)
 
 
     % True for channel 1
@@ -166,24 +129,6 @@ if ~isempty(cData)
             % searches col 1 first then, col 2, ...
             [rowEvent,colEvent]=find(events3 >= 0);
             
-            %{
-            % if there are events(events are not empty)
-            if ~isempty(rowEvent)
-                
-                % YLim = ?
-                YLim=get(axPlot,'ylim');
-                
-                % for each event                
-                for ii=1:size(rowEvent,1)
-                    text(axPlot, ...
-                        events3(rowEvent(ii), colEvent(ii)), ...% x position (event time index)
-                        YLim(1)-10, ...                         % y position 
-                        num2str(events(rowEvent(ii),1)), ...    % dat from eventsToDisplay column 
-                        'color', [0 0 0], ...
-                        'fontsize', fontsize);
-                end
-            end
-            %}
 
             % clear events data
             cla(app.EventsAxes);
@@ -255,59 +200,13 @@ if ~isempty(cData)
         axPlot.YTickLabel = [cathodalLimit; anodalLimit; cathodalLimit];
     end    
 
-
-    %{ 
-    CM - Commented Out    
-    
-    if plotParam.refresh
-        position=getpixelposition(axPlot);
-        set(axPlot, 'Units','Pixels','Position',  [position(1) position(2) plotsize(1) plotsize(2)]);
-        %axis ij  %square
-
-        % if its either channel 1 or the first channel to be plotted.
-        if firstplot || plotnum==1
-            ylabelV=ylabel('Voltage (V)');
-            
-            % set h as a colorbar attached to the color plot
-            h=colorbar(axPlot);
-            
-            cpos = getpixelposition(h);
-            cpos(3) = 10;
-            % position the color bar
-            set(h,'Units','Pixels','Position', [position(1)+plotsize(1)+10  position(2) cpos(3) plotsize(2)]);
-            
-            
-            
-            clabel2=ylabel(h,'Current (nA)','rotation',270,'fontsize',fontsize);
-            set(axPlot, 'Units','Pixels','Position',  [position(1) position(2) plotsize(1) plotsize(2)]); 
-            
-            posclabel=get(clabel2,'position');
-            set(clabel2,'Position',[posclabel(1)+1 posclabel(2)]);
-            set(findall(h,'-property','FontSize'),'FontSize',fontsize)
-        end
-
-        plotParam.refresh=0;        %reset flag
-        % end
-        set(axPlot, 'Units','Pixels','Position',  [position(1) position(2) plotsize(1) plotsize(2)]);
-    end
-    %}
-
 end
     
     colorBarAxes = app.getColorBarAxes();
-    colormap(colorBarAxes, plotParam.map);
-    set(colorBarAxes,'clim', cScale)
+    % colormap(colorBarAxes, plotParam.map);
+    colormap(colorBarAxes, colorMap);
+    set(colorBarAxes,'clim', colorScale)
     colorbar(colorBarAxes, 'Location', 'eastoutside');
-
-    %{
-    % set color bar for all plots
-    if (plotnum == 1)
-        colorbar(allColorPlots(1), 'Location', 'eastoutside');
-        colorbar(allColorPlots(2), 'Location', 'eastoutside');
-        colorbar(allColorPlots(3), 'Location', 'eastoutside');
-        colorbar(allColorPlots(4), 'Location', 'eastoutside');
-    end    
-    %}
 
     set(axPlot,'box','off')
     set(axPlot,'ycolor',[0 0 0]);    

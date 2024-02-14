@@ -1,8 +1,18 @@
 function savebadtrials(subj,sess,varargin)
+
+%UPdated 09/30/2022 HNS to allow saving in arbitrary user defined path
+%"logpath" argument to compare analyses with differnet user validation
+%criter
+
 %save bad trials from text document in triallogs folder to excelsheet
 %trialnum is the label of trial num eg. trial num 100 = trial 1
 %xlswrite(FILE,ARRAY,SHEET,RANGE) writes to the specified SHEET and RANGE.
-pathsave=fullfile('Z:', 'inj-monkey2', 'analysis', subj, 'triallogs', filesep);
+% pathsave=fullfile('Z:', 'inj-monkey2', 'analysis', subj, 'triallogs', filesep);
+pathsave=fullfile('Y:', 'data_MIT', 'analysis', subj, 'triallogs_HNS', filesep); %CHANGE TO YOUR DIRECTORY PATH FOR THE behemoth server
+pathsave=fullfile('Y:', 'data', subj, 'trial_logs', 'hns', filesep); %CHANGE TO YOUR DIRECTORY PATH FOR THE behemoth server
+
+
+
 if ~isdir(pathsave)
     mkdir(pathsave);
 end
@@ -12,6 +22,10 @@ while argnum<=length(varargin)
     switch varargin{argnum}
         case 'ephys'
             ephys=1;
+        case 'logpath'
+            %User supplies pathsave for their trial logs
+            argnum=argnum+1;
+            pathsave=varargin{argnum};
     end
     argnum=argnum+1;
 end

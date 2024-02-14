@@ -18,15 +18,14 @@ t_start=0;  t_end=100;           %defaults in seconds
 csc_map={};
 
 % subset of events, should be displayed
-disp_events=[ 4, 5, 9, 10,6,12, 14, 15, 29,30 45, 46]; 
-
+% disp_events=[ 128,100,101,105, 22,23,24]; 
+disp_events = app.getDisplayEvents(); 
 
 %%
 %read file
 
 % CM - Modification here 
 % File + Path are now set in App Designer startScript method
-% [hgui.FileName,hgui.PathName] = uigetfile('*.*','Select file');
 hgui.FileName = selectedFileName;
 hgui.PathName = selectedPathName;
 
@@ -106,15 +105,26 @@ elseif strcmp(hgui.subject,'patra')
     [parameters,csc_map,eventcodes]=CM_getparams(app, is16ChannelData, 'patrabipolar','default',ncschannels,'sessnum',hgui.sessionnum);
 elseif strcmp(hgui.subject,'cfmea')
     [parameters,csc_map,eventcodes]=CM_getparams(app, is16ChannelData, 'cfmea','rodent',ncschannels,'sessnum',hgui.sessionnum);
+
+elseif strcmp(hgui.subject,'thuong')    %ADDED 
+    parametersfilename=['settings_' hgui.subject '.m']; %ADDED
+    run( parametersfilename);   %loads parameters structure variable %ADDED
+    parameters=hns_getpcaparams(parameters,['pcr_templates' filesep]); % re-exports parameters with additional pca values %ADDED
 end
 
 % if there are no event_codes in plotParam, add event_codes + display_events
 % plotParam.event_codes = { '4' 'display fix' '5' 'start fix' ... }
 % plotParam.disp_events = [ 4, 5, 9, 10, ... ]
+
+% CM - Comment Out - No event codes returned for thuong
+%{
 if ~isfield(plotParam,'event_codes')
     plotParam.event_codes=eventcodes;
     plotParam.disp_events=disp_events; 
 end
+%}
+plotParam.event_codes = {};
+plotParam.disp_events = disp_events;
 
 % Function gets the site names from a file in the 1dr folder.
 % filename = '1dr_cl6_pl1_xx_cl5_100' sites = {'cl6', 'pl1', 'xx' 'cl5'}
@@ -158,10 +168,6 @@ plotParam.colorFSCV = app.getfscvColors();
 
 % CM - Start of figure code
 plotParam.firstplot=1;
-
-
-% Need color map for the App Designer figure
-colormap(appFigure1, plotParam.map); 
 
 
 %compile/organize data for plotting as loaded above in hgui
